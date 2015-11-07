@@ -1,0 +1,80 @@
+#<Widget>:
+#    canvas.before:
+#        Color:
+#            rgba: 1, 1, 1, 1
+#        Rectangle:
+#            pos: self.pos
+#            size: self.size
+#    color: 0, 0, 0.7, 1
+
+#    canvas.after:
+#        Color:
+#            rgba: 0, 0, 0, 1
+#        Line:
+#            rectangle: self.x + 1, self.y + 1, self.width - 1, self.height - 1
+
+BoxLayout:
+    orientation: 'vertical'
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.25
+        Label:
+            id: current_trip_location
+            text: ''
+            font_size: 28
+            halign: 'center'
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.125
+        Spinner:
+            size_hint: 0.4, 1
+            id: choose_country
+            text: app.current_country
+            values: app.country_list
+            font_size: 16
+        TextInput:
+            size_hint: 0.6, 1
+            id: currency_amount1
+            text: ''
+            font_size: 32
+            color: (1,1,0,1)
+            multiline: False
+            on_text_validate: app.conversion1()
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.125
+        Label:
+            id: home_country
+            size_hint: 0.4, 1
+            text: ''
+            font_size: 16
+        TextInput:
+            size_hint: 0.6, 1
+            id: currency_amount2
+            text: ''
+            font_size: 32
+            multiline: False
+            on_text_validate: app.conversion2()
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.4
+        Label:
+            id: current_date
+            text: ''
+            font_size: 32
+            halign: 'center'
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.1
+        Label:
+            size_hint: 0.6, 1
+            id: current_conversion
+            text: ''
+            font_size: 12
+            halign: 'center'
+        Button:
+            size_hint: 0.4, 1
+            id: calculate
+            text: 'Update currency'
+            font_size: 12
+            on_press: app.conversion1()
