@@ -7,6 +7,7 @@ from io import open
 
 import time
 
+
 class CurrencyConverterApp(App):
     """ Firstly setting up some fixed variables to be passed into KV """
 
@@ -54,7 +55,7 @@ class CurrencyConverterApp(App):
 
         current_trip_location_factor = 0
         for i in range(country_counter):
-            date = time.strptime((todays_date), "%Y/%m/%d")
+            date = time.strptime(todays_date, "%Y/%m/%d")
             date1 = time.strptime(country_trip_data[current_trip_location_factor + 1], "%Y/%m/%d")
             date2 = time.strptime(country_trip_data[current_trip_location_factor + 2], "%Y/%m/%d")
             if date > date1 and date < date2:
