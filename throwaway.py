@@ -17,7 +17,6 @@ class CurrencyConverterApp(App):
     country_error = ()
     country_counter = 0  # counter to show number of countries being visited in config.txt file
     country_trip_data = []  # storage array for trip data with home country stripped out
-    todays_date = (time.strftime("%Y/%m/%d"))
 
     def build(self):
         """ build the Kivy app from the kv file """
@@ -39,12 +38,18 @@ class CurrencyConverterApp(App):
                 break
             line = (line.split(','))
             country_test = self.get_details(line[0])
-            if country_test != ():
-                country_trip_data += line
-                country_counter += 1
-            else:
+
+            new_date1 = time.strptime((line[1]), "%Y/%m/%d")
+            new_date2 = time.strptime((line[2]), "%Y/%m/%d")
+            if country_test == ():
                 self.country_error = line[0]
                 (self.root.ids.current_conversion.text) = ('Invalid country name:\n' + line[0])
+            elif new_date1 > new_date2:
+                print('dates are wrong ' + (line[1]))
+                (self.root.ids.current_conversion.text) = ('Invalid dates:\n' + (line[1]) + '\n' + (line[2]))
+            else:
+                country_trip_data += line
+                country_counter += 1
         trip_file.close()
 
         current_trip_location_factor = 0
