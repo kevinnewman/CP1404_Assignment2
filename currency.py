@@ -59,7 +59,8 @@ class CurrencyConverterApp(App):
             date1 = time.strptime(country_trip_data[current_trip_location_factor + 1], "%Y/%m/%d")
             date2 = time.strptime(country_trip_data[current_trip_location_factor + 2], "%Y/%m/%d")
             if date > date1 and date < date2:
-                (self.root.ids.current_trip_location.text) = ('Current trip location: \n' + country_trip_data[current_trip_location_factor])
+                (self.root.ids.current_trip_location.text) = (('Current trip location: \n' +
+                                                               country_trip_data[current_trip_location_factor]))
             else:
                 current_trip_location_factor += 3
         if self.country_error == ():
@@ -94,7 +95,10 @@ class CurrencyConverterApp(App):
                 (self.root.ids.currency_amount2.text) = ''
             else:
                 (self.root.ids.currency_amount2.text) = conversion_result
-                (self.root.ids.current_conversion.text) = (conversion1_details[1] + '(' + conversion1_details[2] + ')' + ' to ' + conversion2_details[1] + '(' + conversion2_details[2] + ')')
+                (self.root.ids.current_conversion.text) = ((conversion1_details[1] + '(' +
+                                                            conversion1_details[2] + ')' + ' to ' +
+                                                            conversion2_details[1] + '(' +
+                                                            conversion2_details[2] + ')'))
         except:
             pass
 
@@ -109,7 +113,10 @@ class CurrencyConverterApp(App):
                 (self.root.ids.currency_amount1.text) = ''
             else:
                 (self.root.ids.currency_amount1.text) = conversion_result
-                (self.root.ids.current_conversion.text) = (conversion2_details[1] + '(' + conversion2_details[2] + ')' + ' to ' + conversion1_details[1] + '(' + conversion1_details[2] + ')')
+                (self.root.ids.current_conversion.text) = ((conversion2_details[1] + '(' +
+                                                            conversion2_details[2] + ')' + ' to ' +
+                                                            conversion1_details[1] + '(' +
+                                                            conversion1_details[2] + ')'))
         except:
             pass
 
