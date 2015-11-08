@@ -6,81 +6,105 @@ from kivy.properties import ListProperty
 from io import open
 
 import time
-import currency
-import trip
-
 
 class CurrencyConverterApp(App):
     """ Firstly setting up some fixed variables to be passed into KV """
 
     current_country = StringProperty()
     country_list = ListProperty()
-
     current_trip_location = ()
-    country = []
+
+    country_error = ()
     country_counter = 0  # counter to show number of countries being visited in config.txt file
     country_trip_data = []  # storage array for trip data with home country stripped out
     todays_date = (time.strftime("%Y/%m/%d"))
-    current_date = ('Today is:\n ' + todays_date)  # kv variable
-
-    trip_file = open('config.txt', 'r')
-    header = trip_file.read(3)  # probably not the right way to remove the BOM characters???
-    home_country = trip_file.readline().strip()  # home country declared
-    while True:
-        line = trip_file.readline().strip()
-        if not line:
-            break
-        country_trip_data += (line.split(','))
-        country_counter += 1
-    trip_file.close()
-
-    current_trip_location_factor = 0
-    for i in range(country_counter):
-        if todays_date > country_trip_data[current_trip_location_factor + 1] and todays_date < country_trip_data[current_trip_location_factor + 2]:
-            current_trip_location = ('Current trip location: \n' + country_trip_data[current_trip_location_factor])
-        else:
-            current_trip_location_factor += 3
-
-# declares/strips country names for spinner in kv file
-    conversion_factor = 0
-    for i in range(country_counter):
-        country.append(country_trip_data[conversion_factor])
-        conversion_factor += 3
-    country_list = country  # country_list - variable used by spinner
 
     def build(self):
         """ build the Kivy app from the kv file """
         Window.size = (350, 500)
         self.title = 'Foreign Exchange Calculator'
         self.root = Builder.load_file('gui.kv')
-        self.current_country = self.country_trip_data[0]
+
+        country_counter = 0  # counter to show number of countries being visited in config.txt file
+        country_trip_data = []  # storage array for trip data with home country stripped out
+        todays_date = (time.strftime("%Y/%m/%d"))
+        (self.root.ids.current_date.text) = ('Today is:\n ' + todays_date)  # kv variable
+
+        trip_file = open('config.txt', 'r')
+        discard_header = trip_file.read(3)  # probably not the right way to remove the BOM characters???
+        home_country = trip_file.readline().strip()  # home country declared
+        while True:
+            line = trip_file.readline().strip()
+            if not line:
+                break
+            line = (line.split(','))
+            country_test = self.get_details(line[0])
+            if country_test != ():
+                country_trip_data += line
+                country_counter += 1
+            else:
+                self.country_error = line[0]
+                (self.root.ids.current_conversion.text) = ('Invalid country name:\n' + line[0])
+        trip_file.close()
+
+        current_trip_location_factor = 0
+        for i in range(country_counter):
+            if todays_date > country_trip_data[current_trip_location_factor + 1] and todays_date < country_trip_data[current_trip_location_factor + 2]:
+                (self.root.ids.current_trip_location.text) = ('Current trip location: \n' + country_trip_data[current_trip_location_factor])
+            else:
+                current_trip_location_factor += 3
+        if self.country_error == ():
+            (self.root.ids.current_conversion.text) = str('Trip details accepted')
+
+# test for valid home country
+        country_test = self.get_details(home_country)
+        if country_test != ():
+            (self.root.ids.home_country.text) = home_country
+        else:
+            (self.root.ids.current_conversion.text) = ('Invalid country name:\n' + home_country)
+
+# declares/strips country names for spinner in kv file
+        country = []
+        conversion_factor = 0
+        for i in range(country_counter):
+            country.append(country_trip_data[conversion_factor])
+            conversion_factor += 3
+        self.country_list = country  # country_list - variable used by spinner
+        self.current_country = country_trip_data[0]
+
         return self.root
 
     def conversion1(self):
-        value = self.get_validated_amount(self.root.ids.currency_amount1.text)
-        conversion1_details = self.get_details(self.root.ids.choose_country.text)
-        conversion2_details = self.get_details(self.root.ids.home_country.text)
-        conversion_result = format(self.convert(value, conversion1_details[1], conversion2_details[1]), '.2f')
-        if conversion_result == '-1.00':
-            (self.root.ids.current_conversion.text) = str('Invalid conversion')
-            (self.root.ids.currency_amount2.text) = str('')
-        else:
-            (self.root.ids.currency_amount2.text) = str(conversion_result)
-            temp_text = (conversion1_details[1] + '(' + conversion1_details[2] + ')' + ' to ' + conversion2_details[1] + '(' + conversion2_details[2] + ')')
-            (self.root.ids.current_conversion.text) = str(temp_text)
+        try:
+            value = self.get_validated_amount(self.root.ids.currency_amount1.text)
+            conversion1_details = self.get_details(self.root.ids.choose_country.text)
+            conversion2_details = self.get_details(self.root.ids.home_country.text)
+            conversion_result = format(self.convert(value, conversion1_details[1], conversion2_details[1]), '.2f')
+            if conversion_result == '-1.00':
+                (self.root.ids.current_conversion.text) = str('Invalid conversion')
+                (self.root.ids.currency_amount2.text) = str('')
+            else:
+                (self.root.ids.currency_amount2.text) = str(conversion_result)
+                temp_text = (conversion1_details[1] + '(' + conversion1_details[2] + ')' + ' to ' + conversion2_details[1] + '(' + conversion2_details[2] + ')')
+                (self.root.ids.current_conversion.text) = str(temp_text)
+        except:
+            pass
 
     def conversion2(self):
-        value = self.get_validated_amount(self.root.ids.currency_amount2.text)
-        conversion1_details = self.get_details(self.root.ids.choose_country.text)
-        conversion2_details = self.get_details(self.root.ids.home_country.text)
-        conversion_result = format(self.convert(value, conversion2_details[1], conversion1_details[1]), '.2f')
-        if conversion_result == '-1.00':
-            (self.root.ids.current_conversion.text) = str('Invalid conversion')
-            (self.root.ids.currency_amount1.text) = str('')
-        else:
-            (self.root.ids.currency_amount1.text) = str(conversion_result)
-            temp_text = (conversion2_details[1] + '(' + conversion2_details[2] + ')' + ' to ' + conversion1_details[1] + '(' + conversion1_details[2] + ')')
-            (self.root.ids.current_conversion.text) = str(temp_text)
+        try:
+            value = self.get_validated_amount(self.root.ids.currency_amount2.text)
+            conversion1_details = self.get_details(self.root.ids.choose_country.text)
+            conversion2_details = self.get_details(self.root.ids.home_country.text)
+            conversion_result = format(self.convert(value, conversion2_details[1], conversion1_details[1]), '.2f')
+            if conversion_result == '-1.00':
+                (self.root.ids.current_conversion.text) = str('Invalid conversion')
+                (self.root.ids.currency_amount1.text) = str('')
+            else:
+                (self.root.ids.currency_amount1.text) = str(conversion_result)
+                temp_text = (conversion2_details[1] + '(' + conversion2_details[2] + ')' + ' to ' + conversion1_details[1] + '(' + conversion1_details[2] + ')')
+                (self.root.ids.current_conversion.text) = str(temp_text)
+        except:
+            pass
 
     def get_validated_amount(self, currency_input_test):
         """
@@ -101,7 +125,7 @@ class CurrencyConverterApp(App):
                 file.close()
                 return tuple(words)
         file.close()
-        return ('-1')
+        return ()
 
     def convert(self, amount, home_currency, target_currency):
         from web_utility import load_page
