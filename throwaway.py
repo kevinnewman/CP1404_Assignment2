@@ -89,12 +89,11 @@ class CurrencyConverterApp(App):
             conversion2_details = self.get_details(self.root.ids.home_country.text)
             conversion_result = format(self.convert(value, conversion1_details[1], conversion2_details[1]), '.2f')
             if conversion_result == '-1.00':
-                (self.root.ids.current_conversion.text) = str('Invalid conversion')
-                (self.root.ids.currency_amount2.text) = str('')
+                (self.root.ids.current_conversion.text) = 'Invalid conversion'
+                (self.root.ids.currency_amount2.text) = ''
             else:
-                (self.root.ids.currency_amount2.text) = str(conversion_result)
-                temp_text = (conversion1_details[1] + '(' + conversion1_details[2] + ')' + ' to ' + conversion2_details[1] + '(' + conversion2_details[2] + ')')
-                (self.root.ids.current_conversion.text) = str(temp_text)
+                (self.root.ids.currency_amount2.text) = conversion_result
+                (self.root.ids.current_conversion.text) = (conversion1_details[1] + '(' + conversion1_details[2] + ')' + ' to ' + conversion2_details[1] + '(' + conversion2_details[2] + ')')
         except:
             pass
 
@@ -105,12 +104,11 @@ class CurrencyConverterApp(App):
             conversion2_details = self.get_details(self.root.ids.home_country.text)
             conversion_result = format(self.convert(value, conversion2_details[1], conversion1_details[1]), '.2f')
             if conversion_result == '-1.00':
-                (self.root.ids.current_conversion.text) = str('Invalid conversion')
-                (self.root.ids.currency_amount1.text) = str('')
+                (self.root.ids.current_conversion.text) = 'Invalid conversion'
+                (self.root.ids.currency_amount1.text) = ''
             else:
-                (self.root.ids.currency_amount1.text) = str(conversion_result)
-                temp_text = (conversion2_details[1] + '(' + conversion2_details[2] + ')' + ' to ' + conversion1_details[1] + '(' + conversion1_details[2] + ')')
-                (self.root.ids.current_conversion.text) = str(temp_text)
+                (self.root.ids.currency_amount1.text) = conversion_result
+                (self.root.ids.current_conversion.text) = (conversion2_details[1] + '(' + conversion2_details[2] + ')' + ' to ' + conversion1_details[1] + '(' + conversion1_details[2] + ')')
         except:
             pass
 
